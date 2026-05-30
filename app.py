@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# 1. Load the trained AI model
+# Load AI model
 try:
     with open('model.pkl', 'rb') as f:
         model = pickle.load(f)
@@ -37,16 +37,30 @@ ROAST_DATABASE = {
     ]
 }
 
+# Home route
+@app.route('/')
+def home():
+    return jsonify({
+        "message": "How Cooked Are You Backend is running!",
+        "status": "success"
+    })
+
+# Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    
-    # Mapping difficulty string to numbers (AI only understands numbers)
-    diff_map = {"Easy": 1, "Medium": 2, "Hard": 3}
-    difficulty_val = diff_map.get(data.get('difficulty', 'Medium'), 2)
 
-    # Prepare the input for the model
-    # Order must match the order in train_model.py
+    diff_map = {
+        "Easy": 1,
+        "Medium": 2,
+        "Hard": 3
+    }
+
+    difficulty_val = diff_map.get(
+        data.get('difficulty', 'Medium'),
+        2
+    )
+
     features = np.array([[
         float(data.get('attendance', 75)),
         float(data.get('internalMarks', 15)),
@@ -58,10 +72,8 @@ def predict():
     ]])
 
     if model:
-        # Use AI Model
         prediction_prob = model.predict_proba(features)[0][1] * 100
     else:
-        # Fallback Logic (if AI is not available)
         score = (
             (100 - float(data.get('attendance', 75))) * 0.4 +
             (30 - float(data.get('internalMarks', 15))) * 1.5 +
@@ -71,7 +83,6 @@ def predict():
 
     cooked_percentage = round(prediction_prob, 1)
 
-    # Determine status and roast
     if cooked_percentage > 70:
         status = "Deep Fried"
     elif cooked_percentage > 35:
@@ -83,7 +94,11 @@ def predict():
         "cooked_percentage": cooked_percentage,
         "pass_probability": round(100 - cooked_percentage, 1),
         "roast": random.choice(ROAST_DATABASE[status]),
-        "status": status + (" 💀" if status == "Deep Fried" else " ⚠️" if status == "Warning" else " 😎")
+        "status": status + (
+            " 💀" if status == "Deep Fried"
+            else " ⚠️" if status == "Warning"
+            else " 😎"
+        )
     })
 
 if __name__ == '__main__':
