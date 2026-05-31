@@ -1,20 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pickle
-import numpy as np
 import random
 import os
 
 app = Flask(__name__)
 CORS(app)
-
-# Load AI model
-try:
-    with open('model.pkl', 'rb') as f:
-        model = pickle.load(f)
-except FileNotFoundError:
-    print("Error: model.pkl not found. Please run train_model.py first!")
-    model = None
 
 ROAST_DATABASE = {
     "Safe": [
@@ -37,7 +27,6 @@ ROAST_DATABASE = {
     ]
 }
 
-# Home route
 @app.route('/')
 def home():
     return jsonify({
@@ -45,7 +34,6 @@ def home():
         "status": "success"
     })
 
-# Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
@@ -61,31 +49,31 @@ def predict():
         2
     )
 
-    features = np.array([[
-        float(data.get('attendance', 75)),
-        float(data.get('internalMarks', 15)),
-        float(data.get('assignments', 80)),
-        float(data.get('sleep', 6)),
-        float(data.get('study', 2)),
-        int(data.get('backlogs', 0)),
-        difficulty_val
-    ]])
+    attendance = float(data.get('attendance', 75))
+    internal_marks = float(data.get('internalMarks', 15))
+    assignments = float(data.get('assignments', 80))
+    sleep = float(data.get('sleep', 6))
+    study = float(data.get('study', 2))
+    backlogs = int(data.get('backlogs', 0))
 
-    if model:
-        prediction_prob = model.predict_proba(features)[0][1] * 100
-    else:
-        score = (
-            (100 - float(data.get('attendance', 75))) * 0.4 +
-            (30 - float(data.get('internalMarks', 15))) * 1.5 +
-            (int(data.get('backlogs', 0)) * 15)
-        )
-        prediction_prob = min(max(score, 0), 100)
+    cooked_score = (
+        (100 - attendance) * 0.40 +
+        (30 - internal_marks) * 1.20 +
+        (100 - assignments) * 0.30 +
+        backlogs * 10 +
+        max(0, 7 - sleep) * 3 +
+        max(0, 5 - study) * 4 +
+        difficulty_val * 5
+    )
 
-    cooked_percentage = round(prediction_prob, 1)
+    cooked_percentage = round(
+        min(max(cooked_score, 0), 100),
+        1
+    )
 
-    if cooked_percentage > 70:
+    if cooked_percentage >= 70:
         status = "Deep Fried"
-    elif cooked_percentage > 35:
+    elif cooked_percentage >= 35:
         status = "Warning"
     else:
         status = "Safe"
