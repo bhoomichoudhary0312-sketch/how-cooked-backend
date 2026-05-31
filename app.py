@@ -37,6 +37,7 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
+    print("Received data:", data)
 
     diff_map = {
         "Easy": 1,
