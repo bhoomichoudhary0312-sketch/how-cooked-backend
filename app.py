@@ -58,14 +58,14 @@ def predict():
     backlogs = int(data.get('backlogs', 0))
 
     cooked_score = (
-        (100 - attendance) * 0.40 +
-        (30 - internal_marks) * 1.20 +
-        (100 - assignments) * 0.30 +
-        backlogs * 10 +
-        max(0, 7 - sleep) * 3 +
-        max(0, 5 - study) * 4 +
-        difficulty_val * 5
-    )
+    (100 - attendance) * 0.25 +
+    (30 - internal_marks) * 0.80 +
+    (100 - assignments) * 0.15 +
+    backlogs * 8 +
+    max(0, 7 - sleep) * 2 +
+    max(0, 5 - study) * 3 +
+    difficulty_val * 3
+)
 
     cooked_percentage = round(
         min(max(cooked_score, 0), 100),
