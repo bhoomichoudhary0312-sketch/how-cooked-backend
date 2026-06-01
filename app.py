@@ -7,23 +7,39 @@ app = Flask(__name__)
 CORS(app)
 
 ROAST_DATABASE = {
-    "Safe": [
-        "You're actually doing okay. Stop overreacting, nerd.",
-        "Living dangerously on the edge of success.",
-        "Academic weapon in the making?",
-        "Is it possible? A student with a functional sleep schedule?"
+    "Academic Weapon 🏆": [
+        "The topper is scared of YOU.",
+        "Attendance up. Marks up. Life together. Suspicious.",
+        "You're carrying the class average single-handedly.",
+        "Touching grass and passing exams. Impressive."
     ],
-    "Warning": [
-        "The library misses you. Go visit once in a while.",
-        "Your GPA is currently on life support.",
-        "Bro studies like WiFi signals in a basement—barely there.",
-        "You're one bad quiz away from a villain origin story."
+
+    "Surviving 😎": [
+        "Not perfect, but definitely not doomed.",
+        "You're balancing chaos surprisingly well.",
+        "One energy drink away from greatness.",
+        "Still standing. That's what matters."
     ],
-    "Deep Fried": [
-        "It's not looking good, champ. Start learning how to flip burgers.",
+
+    "Slightly Cooked 🍳": [
+        "The pan is heating up.",
+        "You should probably start studying soon.",
+        "Academic danger detected, but manageable.",
+        "You're cooking... but not burnt yet."
+    ],
+
+    "Warning ⚠️": [
+        "The library misses you.",
+        "Your GPA is sending distress signals.",
+        "One bad exam away from trouble.",
+        "Time to stop saying 'I'll study tomorrow'."
+    ],
+
+    "Deep Fried 💀": [
         "Academic comeback not found. Error 404.",
-        "You're not just cooked, you're incinerated. 💀",
-        "Your transcript looks like a specialized menu at a BBQ joint."
+        "Your transcript belongs in a museum.",
+        "You're not cooked. You're charcoal.",
+        "Even the syllabus has given up."
     ]
 }
 
@@ -71,22 +87,25 @@ def predict():
         1
     )
 
-    if cooked_percentage >= 70:
-        status = "Deep Fried"
-    elif cooked_percentage >= 35:
-        status = "Warning"
-    else:
-        status = "Safe"
+    if cooked_percentage >= 81:
+        status = "Deep Fried 💀"
 
+    elif cooked_percentage >= 61:
+        status = "Warning ⚠️"
+
+    elif cooked_percentage >= 41:
+        status = "Slightly Cooked 🍳"
+
+    elif cooked_percentage >= 21:
+        status = "Surviving 😎"
+
+    else:
+        status = "Academic Weapon 🏆"
     return jsonify({
         "cooked_percentage": cooked_percentage,
         "pass_probability": round(100 - cooked_percentage, 1),
         "roast": random.choice(ROAST_DATABASE[status]),
-        "status": status + (
-            " 💀" if status == "Deep Fried"
-            else " ⚠️" if status == "Warning"
-            else " 😎"
-        )
+        "status": status
     })
 
 if __name__ == '__main__':
