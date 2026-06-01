@@ -46,7 +46,9 @@ ROAST_DATABASE = {
 @app.route('/')
 def home():
     return jsonify({
-         "version": "NEW_BACKEND_V2"
+         "message": "How Cooked Are You Backend Running",
+    "version": "2.0",
+    "status": "success"
     })
 
 @app.route('/predict', methods=['POST'])
@@ -65,13 +67,13 @@ def predict():
         2
     )
 
-    attendance = float(data.get('attendance', 75))
-    internal_marks = float(data.get('internalMarks', 15))
-    assignments = float(data.get('assignments', 80))
-    sleep = float(data.get('sleep', 6))
-    study = float(data.get('study', 2))
-    backlogs = int(data.get('backlogs', 0))
-
+    attendance = max(0, min(100, float(data.get('attendance', 75))))
+    internal_marks = max(0, min(30, float(data.get('internalMarks', 15))))
+    assignments = max(0, min(100, float(data.get('assignments', 80))))
+    sleep = max(0, min(24, float(data.get('sleep', 6))))
+    study = max(0, min(24, float(data.get('study', 2))))
+    backlogs = max(0, int(data.get('backlogs', 0)))
+    
     cooked_score = (
     (100 - attendance) * 0.25 +
     (30 - internal_marks) * 0.80 +
