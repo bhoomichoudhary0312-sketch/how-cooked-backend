@@ -30,8 +30,7 @@ ROAST_DATABASE = {
 @app.route('/')
 def home():
     return jsonify({
-        "message": "How Cooked Are You Backend is running!",
-        "status": "success"
+        "version": "NEW_SCORING_SYSTEM_A8DB856"
     })
 
 @app.route('/predict', methods=['POST'])
