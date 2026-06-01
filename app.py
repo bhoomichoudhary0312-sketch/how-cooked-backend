@@ -73,7 +73,7 @@ def predict():
     sleep = max(0, min(24, float(data.get('sleep', 6))))
     study = max(0, min(24, float(data.get('study', 2))))
     backlogs = max(0, int(data.get('backlogs', 0)))
-    
+
     cooked_score = (
     (100 - attendance) * 0.25 +
     (30 - internal_marks) * 0.80 +
@@ -103,11 +103,22 @@ def predict():
 
     else:
         status = "Academic Weapon 🏆"
+        if cooked_percentage >= 81:
+            recommendation = "Cancel distractions. Study immediately."
+        elif cooked_percentage >= 61:
+            recommendation = "Focus on weak subjects and increase study hours."
+        elif cooked_percentage >= 41:
+            recommendation = "A little more consistency can improve your score."
+        elif cooked_percentage >= 21:
+            recommendation = "You're doing okay. Keep the momentum going."
+        else:
+            recommendation = "Excellent work. Maintain your routine."
     return jsonify({
         "cooked_percentage": cooked_percentage,
         "pass_probability": round(100 - cooked_percentage, 1),
         "roast": random.choice(ROAST_DATABASE[status]),
-        "status": status
+        "status": status,
+        "recommendation": recommendation
     })
 
 if __name__ == '__main__':
