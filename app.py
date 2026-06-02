@@ -91,28 +91,23 @@ def predict():
 
     if cooked_percentage >= 81:
         status = "Deep Fried 💀"
+        recommendation = "Cancel distractions. Study immediately."
 
     elif cooked_percentage >= 61:
         status = "Warning ⚠️"
+        recommendation = "Focus on weak subjects and increase study hours."
 
     elif cooked_percentage >= 41:
         status = "Slightly Cooked 🍳"
+        recommendation = "A little more consistency can improve your score."
 
     elif cooked_percentage >= 21:
         status = "Surviving 😎"
+        recommendation = "You're doing okay. Keep the momentum going."
 
     else:
         status = "Academic Weapon 🏆"
-        if cooked_percentage >= 81:
-            recommendation = "Cancel distractions. Study immediately."
-        elif cooked_percentage >= 61:
-            recommendation = "Focus on weak subjects and increase study hours."
-        elif cooked_percentage >= 41:
-            recommendation = "A little more consistency can improve your score."
-        elif cooked_percentage >= 21:
-            recommendation = "You're doing okay. Keep the momentum going."
-        else:
-            recommendation = "Excellent work. Maintain your routine."
+        recommendation = "Excellent work. Maintain your routine."
     return jsonify({
         "cooked_percentage": cooked_percentage,
         "pass_probability": round(100 - cooked_percentage, 1),
@@ -123,4 +118,4 @@ def predict():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
